@@ -86,6 +86,18 @@ Ensure you have the following installed on your machine:
 - **Endpoint**: `/api/v1/pokemon/random`
 - **Method**: `GET`
 - **Description**: Returns a random Pokémon's silhouette and multiple-choice options.
+- **Example Request**:
+  ```bash
+  curl -X GET http://localhost:8080/api/v1/pokemon/random
+  ```
+- **Example Response**:
+  ```json
+  {
+    "id": 25,
+    "silhouetteImageUrl": "https://pokeapi.co/sprites/pikachu.png",
+    "options": ["pikachu", "bulbasaur", "charmander"]
+  }
+  ```
 
 ### 2. Verify Guess
 - **Endpoint**: `/api/v1/pokemon/verify`
@@ -94,6 +106,30 @@ Ensure you have the following installed on your machine:
   - `id` (required): Pokémon ID.
   - `guess` (required): User's guessed Pokémon name.
 - **Description**: Validates the guess and returns whether it's correct.
+- **Example Correct Guess Request**:
+  ```bash
+  curl -X POST "http://localhost:8080/api/v1/pokemon/verify?id=25&guess=pikachu"
+  ```
+- **Example Correct Guess Response**:
+  ```json
+  {
+    "trueName": "pikachu",
+    "fullImageUrl": "https://pokeapi.co/sprites/pikachu.png",
+    "correct": true
+  }
+  ```
+- **Example Incorrect Guess Request**:
+  ```bash
+  curl -X POST "http://localhost:8080/api/v1/pokemon/verify?id=25&guess=bulbasaur"
+  ```
+- **Example Incorrect Guess Response**:
+  ```json
+  {
+    "trueName": "pikachu",
+    "fullImageUrl": "https://pokeapi.co/sprites/pikachu.png",
+    "correct": false
+  }
+  ```
 
 ---
 
