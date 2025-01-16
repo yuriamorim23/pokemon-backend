@@ -1,9 +1,11 @@
-# Pokémon Game - Backend
+# Who's That Pokémon? - Backend 🎮
 
-Welcome to the backend of the Pokémon Game! This project provides a RESTful API for interacting with Pokémon data, implementing functionalities like fetching random Pokémon, verifying guesses, and offering options to make the game fun and engaging.
+Welcome to the **backend** of the "Who's That Pokémon?" game!  
+This project provides a **RESTful API** that integrates with **PokéAPI**, allowing users to play a game where they guess the names of Pokémon based on their silhouettes.
 
-## Table of Contents
+---
 
+## 📌 Table of Contents
 - [Overview](#overview)
 - [Features](#features)
 - [Technologies](#technologies)
@@ -16,129 +18,133 @@ Welcome to the backend of the Pokémon Game! This project provides a RESTful API
 
 ---
 
-## Overview
-
-This backend application integrates with the [PokéAPI](https://pokeapi.co/) to fetch Pokémon data and provide a simple game where users guess Pokémon names based on their silhouette. The backend generates random Pokémon, creates multiple-choice options (including wrong ones), and verifies guesses.
-
----
-
-## Features
-
-- Fetch a random Pokémon and its silhouette.
-- Generate multiple-choice options with the correct Pokémon name and two wrong ones.
-- Validate user guesses.
-- Handle errors gracefully with detailed responses.
-- Unit-tested with comprehensive coverage for service and integration layers.
+## 🎯 **Overview**
+The backend fetches Pokémon data, provides multiple-choice name options, and verifies if a player's guess is correct.  
+It ensures that:
+- **Pokémon do not repeat** during a session.
+- **Errors are handled gracefully**.
+- **The API is performant and optimized**.
 
 ---
 
-## Technologies
+## 🚀 **Features**
+✔ Fetches Pokémon silhouettes and name options dynamically.  
+✔ Ensures a fair game by selecting unique Pokémon per session.  
+✔ Validates user guesses and returns results in real-time.  
+✔ Includes robust error handling and structured API responses.  
+✔ Fully tested with **JUnit 5** and **Mockito**.  
 
+---
+
+## 🛠 **Technologies**
 - **Java 17**
 - **Spring Boot 3.4.1**
 - **Maven**
 - **RESTful APIs**
 - **JUnit 5**
 - **Mockito**
-- **PokéAPI**
+- **PokéAPI (Integration)**
 
 ---
 
-## Setup
+## 🛠 **Setup**
+### 📌 **Prerequisites**
+Ensure you have the following installed:
+- **Java 17+**
+- **Maven 3.6+**
+- **Git**
 
-### Prerequisites
+### ▶ **Installation & Running**
+```bash
+# Clone this repository
+git clone https://github.com/yuriamorim23/pokemon-backend.git
 
-Ensure you have the following installed on your machine:
+# Navigate to the project directory
+cd pokemon-backend
 
-- Java 17+
-- Maven 3.6+
-- Git
+# Build the project
+mvn clean install
 
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yuriamorim23/pokemon-backend.git
-   ```
-
-2. Navigate to the project directory:
-   ```bash
-   cd pokemon-backend
-   ```
-
-3. Build the project:
-   ```bash
-   mvn clean install
-   ```
-
-4. Run the application:
-   ```bash
-   mvn spring-boot:run
-   ```
-
-5. The application will be available at `http://localhost:8080`.
+# Run the application
+mvn spring-boot:run
+```
+The application will be available at:  
+📌 **`http://localhost:8080`**
 
 ---
 
-## Endpoints
-
-### 1. Fetch Random Pokémon
-- **Endpoint**: `/api/v1/pokemon/random`
+## 💾 **Endpoints**
+### 1⃣ Fetch a Random Pokémon
+- **Endpoint**: `/api/v1/pokemon/{id}`
 - **Method**: `GET`
-- **Description**: Returns a random Pokémon's silhouette and multiple-choice options.
-- **Example Request**:
-  ```bash
-  curl -X GET http://localhost:8080/api/v1/pokemon/random
-  ```
-- **Example Response**:
-  ```json
-  {
-    "id": 25,
-    "silhouetteImageUrl": "https://pokeapi.co/sprites/pikachu.png",
-    "options": ["pikachu", "bulbasaur", "charmander"]
-  }
-  ```
+- **Description**: Returns a Pokémon’s **silhouette** and **multiple-choice name options**.
 
-### 2. Verify Guess
+#### 📝 **Example Request**
+```bash
+curl -X GET http://localhost:8080/api/v1/pokemon/88
+```
+#### 📌 **Example Response**
+```json
+{
+  "id": 88,
+  "name": "grimer",
+  "imageUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/88.png",
+  "options": [
+    "grimer",
+    "gimmighoul",
+    "meloetta-aria"
+  ]
+}
+```
+
+---
+
+### 2⃣ Verify a Guess
 - **Endpoint**: `/api/v1/pokemon/verify`
 - **Method**: `POST`
 - **Parameters**:
-  - `id` (required): Pokémon ID.
-  - `guess` (required): User's guessed Pokémon name.
-- **Description**: Validates the guess and returns whether it's correct.
-- **Example Correct Guess Request**:
-  ```bash
-  curl -X POST "http://localhost:8080/api/v1/pokemon/verify?id=25&guess=pikachu"
-  ```
-- **Example Correct Guess Response**:
-  ```json
-  {
-    "trueName": "pikachu",
-    "fullImageUrl": "https://pokeapi.co/sprites/pikachu.png",
-    "correct": true
-  }
-  ```
-- **Example Incorrect Guess Request**:
-  ```bash
-  curl -X POST "http://localhost:8080/api/v1/pokemon/verify?id=25&guess=bulbasaur"
-  ```
-- **Example Incorrect Guess Response**:
-  ```json
-  {
-    "trueName": "pikachu",
-    "fullImageUrl": "https://pokeapi.co/sprites/pikachu.png",
-    "correct": false
-  }
-  ```
+  - `id` (required): The Pokémon ID.
+  - `guess` (required): The guessed Pokémon name.
+- **Description**: Checks if the guess is **correct**.
+
+#### ✅ **Example Correct Guess**
+```bash
+curl -X POST "http://localhost:8080/api/v1/pokemon/verify?id=88&guess=grimer"
+```
+#### 📌 **Response**
+```json
+{
+  "trueName": "grimer",
+  "fullImageUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/88.png",
+  "correct": true
+}
+```
 
 ---
 
-## Error Handling
+#### ❌ **Example Incorrect Guess**
+```bash
+curl -X POST "http://localhost:8080/api/v1/pokemon/verify?id=88&guess=pikachu"
+```
+#### 📌 **Response**
+```json
+{
+  "trueName": "grimer",
+  "fullImageUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/88.png",
+  "correct": false
+}
+```
 
-- **400 Bad Request**: Invalid inputs (e.g., missing parameters, incorrect formats).
-- **500 Internal Server Error**: Issues with the PokéAPI integration or other internal errors.
+---
 
-Error responses are structured as:
+## ⚠ **Error Handling**
+| HTTP Status | Meaning | Example Cause |
+|-------------|---------|--------------|
+| **400** Bad Request | Invalid parameters | Missing `id` or `guess` |
+| **404** Not Found | Pokémon ID not found | Invalid ID given |
+| **500** Internal Server Error | API integration failure | Issue with PokéAPI |
+
+#### 📌 **Example Error Response (Invalid ID)**
 ```json
 {
   "status": 400,
@@ -150,40 +156,42 @@ Error responses are structured as:
 
 ---
 
-## Testing
-
-1. Run tests:
-   ```bash
-   mvn test
-   ```
-
-2. Tests include:
-   - Unit tests for service and integration layers.
-   - Mocked external API calls.
+## 🤦 **Testing**
+To run tests, execute:
+```bash
+mvn test
+```
+This will:
+✔ Validate API endpoints  
+✔ Mock PokéAPI responses  
+✔ Ensure correctness of the game logic  
 
 ---
 
-## Contributing
-
-Contributions are welcome! If you'd like to enhance the project:
-
-1. Fork the repository.
-2. Create a feature branch:
+## 🤝 **Contributing**
+Contributions are welcome!  
+To contribute:
+1. **Fork** this repository.
+2. **Create a feature branch**:  
    ```bash
    git checkout -b feature/your-feature
    ```
-3. Commit your changes:
+3. **Commit your changes**:  
    ```bash
    git commit -m "Add your feature"
    ```
-4. Push to your branch:
+4. **Push to your branch**:  
    ```bash
    git push origin feature/your-feature
    ```
-5. Open a pull request.
+5. **Create a Pull Request**.
 
 ---
 
-## License
+## 🐟 **License**
+This project is licensed under the **MIT License**. See the `LICENSE` file for details.
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+---
+
+🚀 **Enjoy playing "Who's That Pokémon?"!** 🎮🔥
+
