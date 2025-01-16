@@ -1,14 +1,13 @@
 package com.example.pokemon.dto;
 
-import java.util.List;
-
 import lombok.Data;
+import java.util.List;
 
 @Data
 public class PokemonResponseDTO {
-	
-	private Long id;
-    private String silhouetteImageUrl;
+    
+    private Long id;
+    private String name;
+    private String imageUrl;
     private List<String> options;
-
 }

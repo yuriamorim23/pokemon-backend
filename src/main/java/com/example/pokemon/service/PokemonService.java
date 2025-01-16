@@ -5,7 +5,7 @@ import com.example.pokemon.dto.PokemonResponseDTO;
 
 public interface PokemonService {
 
-	PokemonResponseDTO getRandomPokemon();
+	PokemonResponseDTO getPokemonById(Long id);
 	GuessResponseDTO verifyGuess(Long id, String guess);
 	
 }

@@ -23,61 +23,62 @@ public class PokeApiIntegrationServiceImpl implements PokeApiIntegrationService 
     private static final String SPRITES_KEY = "sprites";
     private static final String FRONT_DEFAULT_KEY = "front_default";
     private static final String NAME_KEY = "name";
-    private static final int MAX_POKEMON_ID = 50;
-    private static final int MIN_POKEMON_ID = 1;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public PokemonResponseDTO fetchRandomPokemon() {
-        int randomId = (int) (Math.random() * MAX_POKEMON_ID) + MIN_POKEMON_ID;
-        String url = POKE_API_BASE_URL + "pokemon/" + randomId;
+    public PokemonResponseDTO fetchPokemon(Long pokemonId) {
+        if (pokemonId == null || pokemonId <= 0) {
+            throw new IllegalArgumentException("Invalid Pokémon ID: " + pokemonId);
+        }
+
+        String url = POKE_API_BASE_URL + "pokemon/" + pokemonId;
 
         try {
-            // Fetch the correct Pokémon data
-            Map<String, Object> correctPokemonData = fetchPokemonData(url);
-
-            if (correctPokemonData == null) {
-                throw new PokeApiIntegrationException("Null response when fetching Pokémon with ID " + randomId);
+            Map<String, Object> pokemonData = fetchPokemonData(url);
+            if (pokemonData == null) {
+                throw new PokeApiIntegrationException("No response from API for Pokémon ID " + pokemonId);
             }
 
-            // Extract the correct Pokémon name and image URL
-            String correctName = extractPokemonName(correctPokemonData);
-            String silhouetteImageUrl = extractImageUrl(correctPokemonData);
+            String correctName = extractPokemonName(pokemonData);
+            String imageUrl = extractImageUrl(pokemonData);
 
-            // Generate incorrect options
-            List<String> incorrectOptions = fetchRandomPokemonNames(2, randomId);
-
-            // Combine options and shuffle
+            // Gera opções erradas sem repetir a correta
+            List<String> incorrectOptions = fetchRandomPokemonNames(2, pokemonId);
             incorrectOptions.add(correctName);
             Collections.shuffle(incorrectOptions);
 
-            // Prepare the response DTO
             PokemonResponseDTO dto = new PokemonResponseDTO();
-            dto.setId((long) randomId);
-            dto.setSilhouetteImageUrl(silhouetteImageUrl);
+            dto.setId(pokemonId);
+            dto.setName(correctName);
+            dto.setImageUrl(imageUrl);
             dto.setOptions(incorrectOptions);
 
             return dto;
         } catch (Exception e) {
-            throw new PokeApiIntegrationException("Error while fetching Pokémon with ID " + randomId, e);
+            throw new PokeApiIntegrationException("Error fetching Pokémon ID " + pokemonId, e);
         }
     }
 
     @Override
     public GuessResponseDTO verifyGuess(Long id, String guess) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Invalid Pokémon ID: " + id);
+        }
+        if (guess == null || guess.isBlank()) {
+            throw new IllegalArgumentException("The Pokémon name cannot be empty.");
+        }
+
         String url = POKE_API_BASE_URL + "pokemon/" + id;
 
         try {
             Map<String, Object> pokemonData = fetchPokemonData(url);
-
             if (pokemonData == null) {
-                throw new PokeApiIntegrationException("Null response from API when verifying the guess.");
+                throw new PokeApiIntegrationException("No response from API for Pokémon ID " + id);
             }
 
             String trueName = extractPokemonName(pokemonData);
             boolean isCorrect = trueName.equalsIgnoreCase(guess);
-
             String fullImageUrl = extractImageUrl(pokemonData);
 
             GuessResponseDTO dto = new GuessResponseDTO();
@@ -87,14 +88,14 @@ public class PokeApiIntegrationServiceImpl implements PokeApiIntegrationService 
 
             return dto;
         } catch (Exception e) {
-            throw new PokeApiIntegrationException("Error while verifying the guess", e);
+            throw new PokeApiIntegrationException("Error verifying guess for Pokémon ID " + id, e);
         }
     }
 
     private Map<String, Object> fetchPokemonData(String url) {
-        ResponseEntity<Map<String, Object>> responseEntity =
+        ResponseEntity<Map<String, Object>> response =
             restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
-        return responseEntity.getBody();
+        return response.getBody();
     }
 
     private String extractPokemonName(Map<String, Object> pokemonData) {
@@ -113,14 +114,17 @@ public class PokeApiIntegrationServiceImpl implements PokeApiIntegrationService 
                 return frontImageUrl;
             }
         }
-        throw new PokeApiIntegrationException("Image not found for the Pokémon.");
+        throw new PokeApiIntegrationException("Pokémon image not found in API response.");
     }
 
-    private List<String> fetchRandomPokemonNames(int count, int excludeId) {
+    /**
+     * Método para buscar dois nomes de Pokémon aleatórios sem repetir o correto.
+     */
+    private List<String> fetchRandomPokemonNames(int count, Long excludeId) {
         List<String> names = new ArrayList<>();
         while (names.size() < count) {
-            int randomId = (int) (Math.random() * MAX_POKEMON_ID) + MIN_POKEMON_ID;
-            if (randomId == excludeId) continue;
+            int randomId = (int) (Math.random() * 1000) + 1; // Gera IDs entre 1 e 1000 (ajuste conforme necessário)
+            if (randomId == excludeId) continue; // Evita repetir o correto
 
             String url = POKE_API_BASE_URL + "pokemon/" + randomId;
             try {
@@ -130,13 +134,10 @@ public class PokeApiIntegrationServiceImpl implements PokeApiIntegrationService 
                     names.add(name);
                 }
             } catch (Exception ignored) {
-                // Ignore errors and retry
+                // Ignorar erros e continuar tentando buscar nomes aleatórios
             }
         }
         return names;
     }
 }
-
-
-
 

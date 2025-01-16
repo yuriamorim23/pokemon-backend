@@ -1,10 +1,6 @@
 package com.example.pokemon;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -52,13 +48,13 @@ class PokeApiIntegrationServiceImplTest {
     }
 
     @Test
-    void fetchRandomPokemon_ShouldReturnPokemonResponseDTO() {
+    void fetchPokemon_ShouldReturnPokemonResponseDTO() {
         // Arrange
+        Long pokemonId = 25L; // Pikachu ID for example
         String pokemonName = "pikachu";
-        String silhouetteImageUrl = "https://example.com/silhouette.png";
+        String imageUrl = "https://example.com/pikachu.png";
 
-        Map<String, Object> mockResponse = createMockPokemonData(pokemonName, silhouetteImageUrl);
-
+        Map<String, Object> mockResponse = createMockPokemonData(pokemonName, imageUrl);
         ParameterizedTypeReference<Map<String, Object>> responseType = new ParameterizedTypeReference<>() {};
 
         when(restTemplate.exchange(
@@ -69,12 +65,13 @@ class PokeApiIntegrationServiceImplTest {
         ).thenReturn(ResponseEntity.ok(mockResponse));
 
         // Act
-        PokemonResponseDTO response = service.fetchRandomPokemon();
+        PokemonResponseDTO response = service.fetchPokemon(pokemonId);
 
         // Assert
         assertNotNull(response);
-        assertEquals(silhouetteImageUrl, response.getSilhouetteImageUrl());
-        assertTrue(response.getOptions().contains(pokemonName));
+        assertEquals(pokemonId, response.getId());
+        assertEquals(pokemonName, response.getName());
+        assertEquals(imageUrl, response.getImageUrl());
     }
 
     @Test
@@ -85,7 +82,6 @@ class PokeApiIntegrationServiceImplTest {
         String fullImageUrl = "https://example.com/full.png";
 
         Map<String, Object> mockResponse = createMockPokemonData(correctName, fullImageUrl);
-
         ParameterizedTypeReference<Map<String, Object>> responseType = new ParameterizedTypeReference<>() {};
 
         when(restTemplate.exchange(
@@ -113,7 +109,6 @@ class PokeApiIntegrationServiceImplTest {
         String fullImageUrl = "https://example.com/full.png";
 
         Map<String, Object> mockResponse = createMockPokemonData(correctName, fullImageUrl);
-
         ParameterizedTypeReference<Map<String, Object>> responseType = new ParameterizedTypeReference<>() {};
 
         when(restTemplate.exchange(
@@ -134,8 +129,9 @@ class PokeApiIntegrationServiceImplTest {
     }
 
     @Test
-    void fetchRandomPokemon_ShouldThrowException_WhenApiReturnsNull() {
+    void fetchPokemon_ShouldThrowException_WhenApiReturnsNull() {
         // Arrange
+        Long pokemonId = 25L;
         ParameterizedTypeReference<Map<String, Object>> responseType = new ParameterizedTypeReference<>() {};
 
         when(restTemplate.exchange(
@@ -146,6 +142,6 @@ class PokeApiIntegrationServiceImplTest {
         ).thenReturn(ResponseEntity.ok(null));
 
         // Act & Assert
-        assertThrows(PokeApiIntegrationException.class, () -> service.fetchRandomPokemon());
+        assertThrows(PokeApiIntegrationException.class, () -> service.fetchPokemon(pokemonId));
     }
 }

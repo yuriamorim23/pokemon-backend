@@ -1,12 +1,7 @@
 package com.example.pokemon;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
-
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,22 +24,23 @@ class PokemonServiceImplTest {
     private PokeApiIntegrationService pokeApiIntegrationService;
 
     @Test
-    void fetchRandomPokemon_shouldReturnPokemonResponseDTO() {
+    void fetchPokemonById_shouldReturnPokemonResponseDTO() {
         // Mock response from integration service
         PokemonResponseDTO mockResponse = new PokemonResponseDTO();
         mockResponse.setId(10L);
-        mockResponse.setSilhouetteImageUrl("https://pokeapi.co/sprites/pikachu.png");
-        mockResponse.setOptions(List.of("pikachu", "bulbasaur", "charmander"));
+        mockResponse.setName("caterpie");
+        mockResponse.setImageUrl("https://pokeapi.co/sprites/caterpie.png");
 
-        when(pokeApiIntegrationService.fetchRandomPokemon()).thenReturn(mockResponse);
+        when(pokeApiIntegrationService.fetchPokemon(10L)).thenReturn(mockResponse);
 
         // Call method
-        PokemonResponseDTO response = pokemonService.getRandomPokemon();
+        PokemonResponseDTO response = pokemonService.getPokemonById(10L);
 
         // Assertions
         assertNotNull(response);
         assertEquals(10L, response.getId());
-        assertEquals(3, response.getOptions().size());
+        assertEquals("caterpie", response.getName());
+        assertEquals("https://pokeapi.co/sprites/caterpie.png", response.getImageUrl());
     }
 
     @Test
@@ -63,6 +59,8 @@ class PokemonServiceImplTest {
         // Assertions
         assertNotNull(response);
         assertTrue(response.isCorrect());
+        assertEquals("pikachu", response.getTrueName());
+        assertEquals("https://pokeapi.co/sprites/pikachu.png", response.getFullImageUrl());
     }
 
     @Test
@@ -81,5 +79,7 @@ class PokemonServiceImplTest {
         // Assertions
         assertNotNull(response);
         assertFalse(response.isCorrect());
+        assertEquals("pikachu", response.getTrueName());
+        assertEquals("https://pokeapi.co/sprites/pikachu.png", response.getFullImageUrl());
     }
 }
