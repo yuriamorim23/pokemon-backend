@@ -62,4 +62,4 @@ jobs:
             docker pull ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:${{ env.IMAGE_TAG }}
             docker stop pokemon_backend || true
             docker rm pokemon_backend || true
-            docker run -d --name pokemon_backend -p 8080:8080 ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+            docker run -d --name pokemon_backend -p 80:8080 ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:${{ env.IMAGE_TAG }}
