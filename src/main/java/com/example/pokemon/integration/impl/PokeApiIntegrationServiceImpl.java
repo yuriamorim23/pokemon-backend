@@ -47,7 +47,7 @@ public class PokeApiIntegrationServiceImpl implements PokeApiIntegrationService 
             String imageUrl = extractImageUrl(pokemonData);
 
             // Generate incorrect answer options
-            List<String> incorrectOptions = fetchRandomPokemonNames(2, pokemonId);
+            List<String> incorrectOptions = fetchRandomPokemonNames(3, pokemonId);
             incorrectOptions.add(correctName);
             Collections.shuffle(incorrectOptions);
 
